@@ -1,7 +1,6 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var cors = require("cors");
-var uuid = require("uuid");
 require("dotenv").config();
 
 var port = 1337;
