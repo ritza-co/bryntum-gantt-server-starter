@@ -1,6 +1,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var cors = require("cors");
+var uuid = require("uuid");
 require("dotenv").config();
 
 var port = 1337;
@@ -79,6 +80,7 @@ async function serverСonfig() {
         for (const [key2, value2] of Object.entries(value)) {
           if (key2 === "added") {
             value2.forEach((addObj) => taskUpdates.push(addObj));
+            value2[0].id = uuid.v4();
             const val = await addTask(value2[0], "tasks");
             lastKey = val.msg;
             err = val.error;
@@ -103,6 +105,7 @@ async function serverСonfig() {
       if (key === "dependencies") {
         for (const [key2, value2] of Object.entries(value)) {
           if (key2 === "added") {
+            value2[0].id = uuid.v4();
             value2.forEach((addObj) => dependencyUpdates.push(addObj));
             const val = await addTask(value2[0], "dependencies");
             lastKey = val.msg;
@@ -139,6 +142,7 @@ async function serverСonfig() {
   });
 
   async function addTask(addObj, table) {
+    console.log(`addTask: ${JSON.stringify(addObj, `\t`, 2)}`);
     let valArr = [];
     let keyArr = [];
     for (const [key, value] of Object.entries(addObj)) {
@@ -146,7 +150,9 @@ async function serverСonfig() {
         key !== "baselines" &&
         key !== "from" &&
         key !== "to" &&
-        key !== "$PhantomId"
+        key !== "$PhantomId" && 
+        key !== "segments" &&
+        key !== "ignoreResourceCalendar"  
       ) {
         keyArr.push(`\`${key}\``);
         valArr.push(value);
@@ -186,6 +192,7 @@ async function serverСonfig() {
   }
 
   async function updateTask(updateArr, table) {
+    console.log(`updateTask: ${JSON.stringify(updateArr, `\t`, 2)}`);
     let valArrays = [];
     let keyArrays = [];
 
@@ -238,6 +245,7 @@ async function serverСonfig() {
       success: action === "error" ? false : true,
     };
     if (requestId !== undefined && requestId !== null)
+
       result.requestId = requestId;
 
     // updated tasks
